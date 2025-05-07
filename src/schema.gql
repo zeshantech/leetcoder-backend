@@ -1,0 +1,356 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthOutput {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type Comment {
+  content: String!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  discussion: Discussion!
+  discussionId: ID!
+  downvotes: Float!
+  id: ID!
+  parent: Comment
+  parentId: ID
+  updatedAt: DateTime!
+  upvotes: Float!
+  user: User!
+  userId: ID!
+}
+
+type Contest {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  description: String!
+  endTime: DateTime!
+  id: ID!
+  isActive: Boolean!
+  isPremium: Boolean!
+  problems: [Problem!]!
+  registeredParticipants: Float!
+  registrations: [ContestRegistration!]
+  slug: String!
+  startTime: DateTime!
+  status: ContestStatus!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type ContestRegistration {
+  contest: Contest!
+  contestId: ID!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: ID!
+  rank: Float!
+  score: Float!
+  updatedAt: DateTime!
+  user: User!
+  userId: ID!
+}
+
+enum ContestStatus {
+  FINISHED
+  ONGOING
+  UPCOMING
+}
+
+input CreateContestInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateDiscussionInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateNotificationInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateProblemInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateSubmissionInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateSubscriptionInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum Difficulty {
+  EASY
+  HARD
+  MEDIUM
+}
+
+type Discussion {
+  comments: [Comment!]
+  content: String!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  downvotes: Float!
+  id: ID!
+  isPinned: Boolean!
+  problem: Problem
+  problemId: ID
+  title: String!
+  updatedAt: DateTime!
+  upvotes: Float!
+  user: User!
+  userId: ID!
+  views: Float!
+}
+
+input LoginInput {
+  identifier: String!
+  password: String!
+}
+
+type MessageOutput {
+  message: String!
+}
+
+type Mutation {
+  createContest(createContestInput: CreateContestInput!): Contest!
+  createDiscussion(createDiscussionInput: CreateDiscussionInput!): Discussion!
+  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
+  createProblem(createProblemInput: CreateProblemInput!): Problem!
+  createSubmission(createSubmissionInput: CreateSubmissionInput!): Submission!
+  createSubscription(createSubscriptionInput: CreateSubscriptionInput!): Subscription!
+  login(input: LoginInput!): AuthOutput!
+  logout: MessageOutput!
+  register(input: RegisterInput!): MessageOutput!
+  removeContest(id: Int!): Contest!
+  removeDiscussion(id: Int!): Discussion!
+  removeNotification(id: Int!): Notification!
+  removeProblem(id: Int!): Problem!
+  removeSubmission(id: Int!): Submission!
+  removeSubscription(id: Int!): Subscription!
+  requestPasswordReset(input: RequestPasswordResetInput!): MessageOutput!
+  resendVerificationEmail(input: ResendVerificationEmailInput!): MessageOutput!
+  resetPassword(input: ResetPasswordInput!): MessageOutput!
+  updateContest(updateContestInput: UpdateContestInput!): Contest!
+  updateDiscussion(updateDiscussionInput: UpdateDiscussionInput!): Discussion!
+  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
+  updateProblem(updateProblemInput: UpdateProblemInput!): Problem!
+  updateSubmission(updateSubmissionInput: UpdateSubmissionInput!): Submission!
+  updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): Subscription!
+  verifyEmail(input: VerifyEmailInput!): MessageOutput!
+}
+
+type Notification {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  entityId: String
+  entityType: String
+  id: ID!
+  isRead: ID!
+  message: ID!
+  title: ID!
+  updatedAt: DateTime!
+  user: User!
+  userId: ID!
+}
+
+type Problem {
+  acceptanceRate: Float
+  acceptedSubmissions: Float!
+  constraints: String!
+  createdAt: DateTime!
+  deletedAt: DateTime
+  description: String!
+  difficulty: Difficulty!
+  dislikes: Float!
+  examples: String!
+  hints: String
+  id: ID!
+  isActive: Boolean!
+  isPremium: Boolean!
+  likes: Float!
+  memoryLimit: Float!
+  problemSubmissions: [Submission!]
+  slug: String!
+  solutionLink: String
+  submissions: Float!
+  tags: [String!]!
+  testCases: [ProblemTestCase!]
+  timeLimit: Float!
+  title: String!
+  updatedAt: DateTime!
+  user: User!
+}
+
+type ProblemTestCase {
+  explanation: String
+  id: ID!
+  input: String!
+  output: String!
+  problem: Problem!
+}
+
+type Query {
+  contest(id: Int!): Contest!
+  discussion(id: Int!): Discussion!
+  notification(id: Int!): Notification!
+  problem(id: Int!): Problem!
+  submission(id: Int!): Submission!
+  subscription(id: Int!): Subscription!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+input RequestPasswordResetInput {
+  email: String!
+}
+
+input ResendVerificationEmailInput {
+  email: String!
+}
+
+input ResetPasswordInput {
+  newPassword: String!
+  token: String!
+}
+
+type Submission {
+  code: String!
+  errorMessage: String
+  id: ID!
+  language: String!
+  memory: Float
+  problem: Problem!
+  problemId: ID!
+  runtime: Float
+  status: SubmissionStatus!
+  submittedAt: DateTime!
+  user: User!
+  userId: ID!
+}
+
+enum SubmissionStatus {
+  ACCEPTED
+  COMPILATION_ERROR
+  MEMORY_LIMIT_EXCEEDED
+  PENDING
+  RUNTIME_ERROR
+  TIME_LIMIT_EXCEEDED
+  WRONG_ANSWER
+}
+
+type Subscription {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+enum SubscriptionPlan {
+  FREE
+  PREMIUM
+}
+
+input UpdateContestInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateDiscussionInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateNotificationInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateProblemInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateSubmissionInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateSubscriptionInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+type User {
+  avatarUrl: String
+  bio: String
+  contestRegistrations: [ContestRegistration!]
+  createdAt: DateTime!
+  currentStreak: Float!
+  deletedAt: DateTime
+  discussions: [Discussion!]
+  displayName: String
+  easyProblemsSolved: Float!
+  email: String!
+  hardProblemsSolved: Float!
+  id: ID!
+  isActive: Boolean!
+  isVerified: Boolean!
+  maxStreak: Float!
+  mediumProblemsSolved: Float!
+  notifications: [Notification!]
+  problems: [Problem!]
+  reputation: Float!
+  role: UserRole!
+  submissions: [Submission!]
+  subscriptions: UserSubscription
+  totalSolved: Float!
+  updatedAt: DateTime!
+  username: String!
+}
+
+enum UserRole {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+type UserSubscription {
+  autoRenew: Boolean!
+  createdAt: DateTime!
+  endDate: DateTime!
+  id: ID!
+  isActive: Boolean!
+  plan: SubscriptionPlan!
+  startDate: DateTime!
+  user: User!
+  userId: ID!
+}
+
+input VerifyEmailInput {
+  token: String!
+}
