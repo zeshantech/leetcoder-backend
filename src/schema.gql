@@ -2,9 +2,26 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddProblemToContestInput {
+  contestId: ID!
+  problemId: ID!
+}
+
+input AddProblemToListInput {
+  listId: ID!
+  problemId: ID!
+}
+
 type AuthOutput {
   accessToken: String!
   refreshToken: String!
+}
+
+type CodeExecutionOutput {
+  executionId: ID!
+  message: String
+  status: String!
+  success: Boolean!
 }
 
 type Comment {
@@ -36,70 +53,83 @@ type Contest {
   registrations: [ContestRegistration!]
   slug: String!
   startTime: DateTime!
-  status: ContestStatus!
+  status: String!
   title: String!
   updatedAt: DateTime!
 }
 
+type ContestEligibilityOutput {
+  contest: Contest!
+  eligible: Boolean!
+  message: String!
+  registered: Boolean
+}
+
+type ContestLeaderboardOutput {
+  contest: Contest!
+  currentPage: Float!
+  docs: [ContestRegistration!]!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Float!
+  totalPages: Float!
+}
+
 type ContestRegistration {
   contest: Contest!
-  contestId: ID!
   createdAt: DateTime!
   deletedAt: DateTime
   id: ID!
+  problemsSolved: Float!
   rank: Float!
   score: Float!
+  totalAttempts: Float!
   updatedAt: DateTime!
   user: User!
-  userId: ID!
-}
-
-enum ContestStatus {
-  FINISHED
-  ONGOING
-  UPCOMING
 }
 
 input CreateContestInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input CreateDiscussionInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input CreateNotificationInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  description: String!
+  endTime: DateTime!
+  isActive: Boolean! = true
+  isPremium: Boolean! = false
+  problemIds: [String!]
+  slug: String!
+  startTime: DateTime!
+  title: String!
 }
 
 input CreateProblemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  constraints: String!
+  description: String!
+  difficulty: String!
+  isActive: Boolean! = true
+  isPremium: Boolean! = false
+  memoryLimit: Float!
+  solutionLink: String
+  tags: [String!]!
+  testCases: [TestCaseInput!]!
+  timeLimit: Float!
+  title: String!
+}
+
+input CreateProblemListInput {
+  description: String
+  isPublic: Boolean! = false
+  name: String!
+  problemIds: [String!]
 }
 
 input CreateSubmissionInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input CreateSubscriptionInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  code: String!
+  language: String!
+  problemId: ID!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-enum Difficulty {
-  EASY
-  HARD
-  MEDIUM
-}
 
 type Discussion {
   comments: [Comment!]
@@ -119,6 +149,106 @@ type Discussion {
   views: Float!
 }
 
+input ExecuteCodeInput {
+  code: String!
+  customInputs: [String!]
+  language: String!
+  problemId: ID!
+}
+
+type ExecutionResultOutput {
+  errorMessage: String
+  executionId: ID!
+  memory: Float
+  message: String
+  output: String
+  runtime: Float
+  status: String!
+  success: Boolean!
+  testCasesPassed: Float
+  totalTestCases: Float
+}
+
+type GetAllProblemListsOutput {
+  currentPage: Float!
+  docs: [ProblemList!]!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Float!
+  totalPages: Float!
+}
+
+type GetAllProblemsOutput {
+  currentPage: Float!
+  docs: [Problem!]!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Float!
+  totalPages: Float!
+}
+
+input GetContestLeaderboardInput {
+  contestId: ID!
+  limit: Float! = 10
+  page: Float! = 1
+}
+
+type GetContestProblemsOutput {
+  problemCount: Float!
+  problems: [Problem!]!
+}
+
+input GetContestsInput {
+  isActive: Boolean
+  isPremium: Boolean
+  limit: Float! = 10
+  page: Float! = 1
+  search: String
+  status: String
+}
+
+type GetContestsOutput {
+  currentPage: Float!
+  docs: [Contest!]!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Float!
+  totalPages: Float!
+}
+
+input GetProblemListsInput {
+  isPublic: Boolean
+  limit: Float! = 10
+  page: Float! = 1
+}
+
+input GetProblemsInput {
+  difficulty: String
+  limit: Float! = 10
+  page: Float! = 1
+  search: String
+  tags: [String!]
+}
+
+input GetSubmissionsInput {
+  limit: Float! = 10
+  page: Float! = 1
+  problemId: ID
+}
+
+type GetSubmissionsOutput {
+  currentPage: Float!
+  docs: [Submission!]!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Float!
+  totalPages: Float!
+}
+
+input IDInput {
+  id: ID!
+}
+
 input LoginInput {
   identifier: String!
   password: String!
@@ -129,30 +259,29 @@ type MessageOutput {
 }
 
 type Mutation {
-  createContest(createContestInput: CreateContestInput!): Contest!
-  createDiscussion(createDiscussionInput: CreateDiscussionInput!): Discussion!
-  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
-  createProblem(createProblemInput: CreateProblemInput!): Problem!
-  createSubmission(createSubmissionInput: CreateSubmissionInput!): Submission!
-  createSubscription(createSubscriptionInput: CreateSubscriptionInput!): Subscription!
+  addProblemToContest(input: AddProblemToContestInput!): Contest!
+  addProblemToList(input: AddProblemToListInput!): ProblemList!
+  createContest(input: CreateContestInput!): Contest!
+  createProblem(input: CreateProblemInput!): Problem!
+  createProblemList(input: CreateProblemListInput!): ProblemList!
+  deleteContest(params: IDInput!): MessageOutput!
+  deleteProblem(params: IDInput!): MessageOutput!
+  deleteProblemList(params: IDInput!): MessageOutput!
+  executeCode(input: ExecuteCodeInput!): CodeExecutionOutput!
   login(input: LoginInput!): AuthOutput!
   logout: MessageOutput!
   register(input: RegisterInput!): MessageOutput!
-  removeContest(id: Int!): Contest!
-  removeDiscussion(id: Int!): Discussion!
-  removeNotification(id: Int!): Notification!
-  removeProblem(id: Int!): Problem!
-  removeSubmission(id: Int!): Submission!
-  removeSubscription(id: Int!): Subscription!
+  registerForContest(params: IDInput!): ContestRegistration!
+  removeProblemFromContest(input: RemoveProblemFromContestInput!): Contest!
+  removeProblemFromList(input: RemoveProblemFromListInput!): ProblemList!
   requestPasswordReset(input: RequestPasswordResetInput!): MessageOutput!
   resendVerificationEmail(input: ResendVerificationEmailInput!): MessageOutput!
   resetPassword(input: ResetPasswordInput!): MessageOutput!
-  updateContest(updateContestInput: UpdateContestInput!): Contest!
-  updateDiscussion(updateDiscussionInput: UpdateDiscussionInput!): Discussion!
-  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
-  updateProblem(updateProblemInput: UpdateProblemInput!): Problem!
-  updateSubmission(updateSubmissionInput: UpdateSubmissionInput!): Submission!
-  updateSubscription(updateSubscriptionInput: UpdateSubscriptionInput!): Subscription!
+  submitSolution(input: CreateSubmissionInput!): Submission!
+  updateContest(input: UpdateContestInput!, params: IDInput!): Contest!
+  updateProblem(input: UpdateProblemInput!, params: IDInput!): Problem!
+  updateProblemList(input: UpdateProblemListInput!): ProblemList!
+  updateUserContestScore(params: IDInput!, points: Float!): MessageOutput!
   verifyEmail(input: VerifyEmailInput!): MessageOutput!
 }
 
@@ -170,25 +299,29 @@ type Notification {
   userId: ID!
 }
 
+input PaginationInput {
+  limit: Float! = 10
+  page: Float! = 1
+}
+
 type Problem {
   acceptanceRate: Float
+  acceptedCount: Float!
   acceptedSubmissions: Float!
-  constraints: String!
+  constraints: String
   createdAt: DateTime!
   deletedAt: DateTime
   description: String!
-  difficulty: Difficulty!
+  difficulty: String!
   dislikes: Float!
-  examples: String!
-  hints: String
   id: ID!
   isActive: Boolean!
   isPremium: Boolean!
   likes: Float!
   memoryLimit: Float!
   problemSubmissions: [Submission!]
-  slug: String!
   solutionLink: String
+  submissionCount: Float!
   submissions: Float!
   tags: [String!]!
   testCases: [ProblemTestCase!]
@@ -198,27 +331,83 @@ type Problem {
   user: User!
 }
 
+type ProblemList {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  description: String
+  id: ID!
+  isPublic: Boolean!
+  name: String!
+  problems: [Problem!]!
+  updatedAt: DateTime!
+  user: User!
+}
+
+type ProblemStatsOutput {
+  acceptanceRate: Float!
+  acceptedCount: Float!
+  lastSubmitted: DateTime!
+  message: String
+  problemId: ID!
+  status: String!
+  submissionCount: Float!
+  success: Boolean!
+}
+
 type ProblemTestCase {
+  createdAt: DateTime!
+  deletedAt: DateTime
   explanation: String
   id: ID!
   input: String!
+  inputType: String!
+  isHidden: Boolean!
   output: String!
+  outputType: String!
   problem: Problem!
+  updatedAt: DateTime!
 }
 
 type Query {
-  contest(id: Int!): Contest!
-  discussion(id: Int!): Discussion!
-  notification(id: Int!): Notification!
-  problem(id: Int!): Problem!
-  submission(id: Int!): Submission!
-  subscription(id: Int!): Subscription!
+  checkContestEligibility(params: IDInput!): ContestEligibilityOutput!
+  executionResult(params: IDInput!): ExecutionResultOutput!
+  getAllContests(input: GetContestsInput): GetContestsOutput!
+  getAllProblemLists(input: GetProblemListsInput): GetAllProblemListsOutput!
+  getAllProblems(input: GetProblemsInput): GetAllProblemsOutput!
+  getAllSubmissions(input: GetSubmissionsInput): GetSubmissionsOutput!
+  getContest(params: IDInput!): Contest!
+  getContestLeaderboard(input: GetContestLeaderboardInput!): ContestLeaderboardOutput!
+  getContestProblems(params: IDInput!): GetContestProblemsOutput!
+  getOngoingContests(input: PaginationInput): GetContestsOutput!
+  getProblem(params: IDInput!): Problem!
+  getProblemList(params: IDInput!): ProblemList!
+  getUpcomingContests(input: PaginationInput): GetContestsOutput!
+  getUserContestParticipation(input: PaginationInput): GetContestsOutput!
+  getUserContestSubmissions(input: PaginationInput, params: IDInput!): MessageOutput!
+  problemDifficulties: [String!]!
+  problemStats(params: IDInput!): ProblemStatsOutput!
+  problemSubmissions(input: GetSubmissionsInput, params: IDInput!): GetSubmissionsOutput!
+  problemTags: [String!]!
+  submission(params: IDInput!): Submission!
+  submissionStatus(params: IDInput!): String!
+  userProblemStatus: UserProblemsStatusOutput!
+  userStreak: UserStreakOutput!
 }
 
 input RegisterInput {
   email: String!
   password: String!
   username: String!
+}
+
+input RemoveProblemFromContestInput {
+  contestId: ID!
+  problemId: ID!
+}
+
+input RemoveProblemFromListInput {
+  listId: ID!
+  problemId: ID!
 }
 
 input RequestPasswordResetInput {
@@ -243,66 +432,48 @@ type Submission {
   problem: Problem!
   problemId: ID!
   runtime: Float
-  status: SubmissionStatus!
+  status: String!
   submittedAt: DateTime!
   user: User!
-  userId: ID!
 }
 
-enum SubmissionStatus {
-  ACCEPTED
-  COMPILATION_ERROR
-  MEMORY_LIMIT_EXCEEDED
-  PENDING
-  RUNTIME_ERROR
-  TIME_LIMIT_EXCEEDED
-  WRONG_ANSWER
-}
-
-type Subscription {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-enum SubscriptionPlan {
-  FREE
-  PREMIUM
+input TestCaseInput {
+  explanation: String
+  input: String!
+  inputType: String!
+  output: String!
+  outputType: String!
 }
 
 input UpdateContestInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input UpdateDiscussionInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input UpdateNotificationInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  description: String
+  endTime: DateTime
+  isActive: Boolean
+  isPremium: Boolean
+  slug: String
+  startTime: DateTime
+  title: String
 }
 
 input UpdateProblemInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  constraints: String
+  description: String
+  difficulty: String
+  isActive: Boolean
+  isPremium: Boolean
+  memoryLimit: Float
+  solutionLink: String
+  tags: [String!]
+  testCases: [TestCaseInput!]
+  timeLimit: Float
+  title: String
 }
 
-input UpdateSubmissionInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input UpdateSubscriptionInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input UpdateProblemListInput {
+  description: String
+  id: ID!
+  isPublic: Boolean
+  name: String
 }
 
 type User {
@@ -323,9 +494,10 @@ type User {
   maxStreak: Float!
   mediumProblemsSolved: Float!
   notifications: [Notification!]
+  problemLists: [ProblemList!]
   problems: [Problem!]
   reputation: Float!
-  role: UserRole!
+  role: String!
   submissions: [Submission!]
   subscriptions: UserSubscription
   totalSolved: Float!
@@ -333,20 +505,33 @@ type User {
   username: String!
 }
 
-enum UserRole {
-  ADMIN
-  MODERATOR
-  USER
+type UserProblemsStatusOutput {
+  attemptedCount: Float!
+  attemptedProblemIds: [String!]!
+  message: String
+  solvedCount: Float!
+  solvedProblemIds: [String!]!
+  success: Boolean!
+  totalCount: Float!
+}
+
+type UserStreakOutput {
+  currentStreak: Float!
+  maxStreak: Float!
+  success: Boolean!
+  totalActiveDays: Float!
 }
 
 type UserSubscription {
   autoRenew: Boolean!
   createdAt: DateTime!
+  deletedAt: DateTime
   endDate: DateTime!
   id: ID!
   isActive: Boolean!
-  plan: SubscriptionPlan!
+  plan: String!
   startDate: DateTime!
+  updatedAt: DateTime!
   user: User!
   userId: ID!
 }

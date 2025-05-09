@@ -1,22 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { SubscriptionPlan } from '../../common/types/common.types';
 import { User } from '../../user/entities/user.entity';
+import { EntityBase } from 'src/common/entities/base.entity';
 
 @ObjectType()
 @Entity()
-export class UserSubscription {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class UserSubscription extends EntityBase {
   @Field(() => ID)
   @Column()
   userId: string;
@@ -26,7 +16,7 @@ export class UserSubscription {
   @JoinColumn()
   user: User;
 
-  @Field(() => SubscriptionPlan)
+  @Field()
   @Column({
     type: 'enum',
     enum: SubscriptionPlan,
@@ -49,8 +39,4 @@ export class UserSubscription {
   @Field(() => Boolean)
   @Column({ default: false })
   autoRenew: boolean;
-
-  @Field(() => Date)
-  @CreateDateColumn()
-  createdAt: Date;
 }

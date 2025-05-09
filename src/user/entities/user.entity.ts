@@ -5,7 +5,7 @@ import { Discussion } from '../../discussion/entities/discussion.entity';
 import { Notification } from '../../notification/entities/notification.entity';
 import { UserSubscription } from '../../subscription/entities/user-subscription.entity';
 import { ContestRegistration } from '../../contest/entities/contest-registration.entity';
-import { Problem } from '../../problem/entities/problem.entity';
+import { Problem, ProblemList } from '../../problem/entities/problem.entity';
 import { EntityBase } from 'src/common/entities/base.entity';
 import { UserRole } from 'src/common/types/common.types';
 
@@ -35,7 +35,7 @@ export class User extends EntityBase {
   @Column({ nullable: true })
   avatarUrl: string;
 
-  @Field(() => UserRole)
+  @Field()
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -102,4 +102,8 @@ export class User extends EntityBase {
   @Field(() => [Problem], { nullable: true })
   @OneToMany(() => Problem, (problem) => problem.user)
   problems: Problem[];
+
+  @Field(() => [ProblemList], { nullable: true })
+  @OneToMany(() => ProblemList, (problemList) => problemList.user)
+  problemLists: ProblemList[];
 }

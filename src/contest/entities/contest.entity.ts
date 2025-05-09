@@ -28,7 +28,7 @@ export class Contest extends EntityBase {
   @Column()
   endTime: Date;
 
-  @Field(() => ContestStatus)
+  @Field()
   @Column({
     type: 'enum',
     enum: ContestStatus,
@@ -50,10 +50,10 @@ export class Contest extends EntityBase {
 
   @Field(() => [Problem])
   @ManyToMany(() => Problem)
-  @JoinTable()
+  @JoinTable({ name: 'contest_problem' })
   problems: Problem[];
 
   @Field(() => [ContestRegistration], { nullable: true })
   @OneToMany(() => ContestRegistration, (registration) => registration.contest)
-  registrations?: ContestRegistration[];
+  registrations: ContestRegistration[];
 }

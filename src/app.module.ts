@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ProblemModule } from './problem/problem.module';
 import { SubmissionModule } from './submission/submission.module';
+import { CodeExecutionModule } from './code-execution/code-execution.module';
 import { ContestModule } from './contest/contest.module';
 import { DiscussionModule } from './discussion/discussion.module';
 import { SubscriptionModule } from './subscription/subscription.module';
@@ -14,25 +15,20 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './user/entities/user.entity';
-import {
-  Problem,
-  ProblemTestCase,
-  ProblemList,
-} from './problem/entities/problem.entity';
+import { Problem, ProblemTestCase, ProblemList } from './problem/entities/problem.entity';
 import { Submission } from './submission/entities/submission.entity';
+import { CodeExecution } from './code-execution/entities/code-execution.entity';
 import { Contest } from './contest/entities/contest.entity';
 import { ContestRegistration } from './contest/entities/contest-registration.entity';
 import { Discussion } from './discussion/entities/discussion.entity';
 import { Comment } from './discussion/entities/comment.entity';
 import { UserSubscription } from './subscription/entities/user-subscription.entity';
-import {
-  Notification,
-  NotificationSettings,
-} from './notification/entities/notification.entity';
+import { Notification, NotificationSettings } from './notification/entities/notification.entity';
 import { join } from 'path';
 import { CacheModule } from '@nestjs/cache-manager';
 import { SharedModule } from './shared/shared.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -45,14 +41,21 @@ import { MailerModule } from '@nestjs-modules/mailer';
     // Cache
     CacheModule.register(),
 
+    // BullMQ
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
+
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         transport: {
           host: configService.get<string>('EMAIL_HOST'),
           port: configService.get<number>('EMAIL_PORT'),
-          secure:
-            configService.get<string>('EMAIL_SECURE') === 'true' ? true : false,
+          secure: configService.get<string>('EMAIL_SECURE') === 'true' ? true : false,
           auth: {
             user: configService.get<string>('EMAIL_USER'),
             pass: configService.get<string>('EMAIL_PASS'),
@@ -71,20 +74,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         username: configService.get<string>('DB_USERNAME') || 'root',
         password: configService.get<string>('DB_PASSWORD') || 'root',
         database: configService.get<string>('DB_DATABASE') || 'leetcode',
-        entities: [
-          User,
-          Problem,
-          ProblemTestCase,
-          ProblemList,
-          Submission,
-          Contest,
-          ContestRegistration,
-          Discussion,
-          Comment,
-          UserSubscription,
-          Notification,
-          NotificationSettings,
-        ],
+        entities: [User, Problem, ProblemTestCase, ProblemList, Submission, CodeExecution, Contest, ContestRegistration, Discussion, Comment, UserSubscription, Notification, NotificationSettings],
         synchronize: true, // Set to false in production
       }),
       inject: [ConfigService],
@@ -107,6 +97,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     UserModule,
     ProblemModule,
     SubmissionModule,
+    CodeExecutionModule,
     ContestModule,
     DiscussionModule,
     SubscriptionModule,

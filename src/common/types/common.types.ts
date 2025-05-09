@@ -1,9 +1,7 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-
 export enum Difficulty {
-  EASY = 'EASY',
-  MEDIUM = 'MEDIUM',
-  HARD = 'HARD',
+  EASY = 'easy',
+  MEDIUM = 'medium',
+  HARD = 'hard',
 }
 
 export enum UserRole {
@@ -13,73 +11,37 @@ export enum UserRole {
 }
 
 export enum ProblemStatus {
-  SOLVED = 'SOLVED',
-  ATTEMPTED = 'ATTEMPTED',
-  NOT_STARTED = 'NOT_STARTED',
+  SOLVED = 'solved',
+  ATTEMPTED = 'attempted',
+  NOT_STARTED = 'not_started',
 }
 
 export enum SubmissionStatus {
-  ACCEPTED = 'ACCEPTED',
-  WRONG_ANSWER = 'WRONG_ANSWER',
-  TIME_LIMIT_EXCEEDED = 'TIME_LIMIT_EXCEEDED',
-  MEMORY_LIMIT_EXCEEDED = 'MEMORY_LIMIT_EXCEEDED',
-  RUNTIME_ERROR = 'RUNTIME_ERROR',
-  COMPILATION_ERROR = 'COMPILATION_ERROR',
-  PENDING = 'PENDING',
+  ACCEPTED = 'accepted',
+  WRONG_ANSWER = 'wrong_answer',
+  TIME_LIMIT_EXCEEDED = 'time_limit_exceeded',
+  MEMORY_LIMIT_EXCEEDED = 'memory_limit_exceeded',
+  RUNTIME_ERROR = 'runtime_error',
+  COMPILATION_ERROR = 'compilation_error',
+  PENDING = 'pending',
 }
 
 export enum SubscriptionPlan {
-  FREE = 'FREE',
-  PREMIUM = 'PREMIUM',
+  FREE = 'free',
+  PREMIUM = 'premium',
 }
 
 export enum ContestStatus {
-  UPCOMING = 'UPCOMING',
-  ONGOING = 'ONGOING',
-  FINISHED = 'FINISHED',
+  UPCOMING = 'upcoming',
+  ONGOING = 'ongoing',
+  FINISHED = 'finished',
 }
 
-registerEnumType(Difficulty, {
-  name: 'Difficulty',
-});
-
-registerEnumType(ProblemStatus, {
-  name: 'ProblemStatus',
-});
-
-registerEnumType(SubmissionStatus, {
-  name: 'SubmissionStatus',
-});
-
-registerEnumType(UserRole, {
-  name: 'UserRole',
-});
-
-registerEnumType(SubscriptionPlan, {
-  name: 'SubscriptionPlan',
-});
-
-registerEnumType(ContestStatus, {
-  name: 'ContestStatus',
-});
-
-@ObjectType()
-export class PaginationInfo {
-  @Field()
-  totalCount: number;
-
-  @Field()
-  hasNextPage: boolean;
-
-  @Field()
-  hasPreviousPage: boolean;
-}
-
-@ObjectType()
-export class BaseResponse {
-  @Field()
-  success: boolean;
-
-  @Field({ nullable: true })
-  message?: string;
+export enum TestCaseIOType {
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  ARRAY = 'array',
+  OBJECT = 'object',
+  DATE = 'date',
 }

@@ -1,59 +1,39 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
-import { Difficulty } from '../../common/types/common.types';
+import { Entity, Column, OneToMany, ManyToMany, JoinTable, JoinColumn, ManyToOne } from 'typeorm';
+import { Difficulty, TestCaseIOType } from '../../common/types/common.types';
 import { Submission } from '../../submission/entities/submission.entity';
 import { User } from 'src/user/entities/user.entity';
 import { EntityBase } from 'src/common/entities/base.entity';
 
 @ObjectType()
-@Entity()
+@Entity('problems')
 export class Problem extends EntityBase {
   @Field()
-  @Column({ unique: true })
   title: string;
 
+  @Column({ type: 'text' })
   @Field()
-  @Column({ unique: true })
-  slug: string;
-
-  @Field()
-  @Column('text')
   description: string;
 
-  @Field(() => Difficulty)
-  @Column({
-    type: 'enum',
-    enum: Difficulty,
-    default: Difficulty.MEDIUM,
-  })
+  @Column({ type: 'enum', enum: Difficulty })
+  @Field()
   difficulty: Difficulty;
 
+  @Column({ type: 'simple-array' })
   @Field(() => [String])
-  @Column('simple-array')
   tags: string[];
 
-  @Field()
-  @Column('text')
+  @Column({ type: 'text', nullable: true })
+  @Field(() => String, { nullable: true })
   constraints: string;
 
+  @Column({ default: 0, type: 'int' })
   @Field()
-  @Column('text')
-  examples: string;
+  submissionCount: number;
 
-  @Field({ nullable: true })
-  @Column('text', { nullable: true })
-  hints?: string;
+  @Column({ default: 0 })
+  @Field()
+  acceptedCount: number;
 
   @Field(() => Number)
   @Column({ default: 0 })
@@ -72,11 +52,11 @@ export class Problem extends EntityBase {
   acceptedSubmissions: number;
 
   @Field(() => Number, { nullable: true })
-  acceptanceRate?: number;
+  acceptanceRate: number;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
-  solutionLink?: string;
+  solutionLink: string;
 
   @Field()
   @Column({ default: true })
@@ -101,70 +81,67 @@ export class Problem extends EntityBase {
 
   @Field(() => [ProblemTestCase], { nullable: true })
   @OneToMany(() => ProblemTestCase, (testCase) => testCase.problem)
-  testCases?: ProblemTestCase[];
+  testCases: ProblemTestCase[];
 
   @Field(() => [Submission], { nullable: true })
   @OneToMany(() => Submission, (submission) => submission.problem)
-  problemSubmissions?: Submission[];
+  problemSubmissions: Submission[];
 }
 
 @ObjectType()
 @Entity()
-export class ProblemTestCase {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class ProblemTestCase extends EntityBase {
   @Field()
-  @Column()
+  @Column({ type: 'text' })
   input: string;
 
   @Field()
-  @Column()
+  @Column({ type: 'text' })
   output: string;
+
+  @Field()
+  @Column({ type: 'enum', enum: TestCaseIOType, default: TestCaseIOType.STRING })
+  inputType: TestCaseIOType;
+
+  @Field()
+  @Column({ type: 'enum', enum: TestCaseIOType, default: TestCaseIOType.STRING })
+  outputType: TestCaseIOType;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  explanation?: string;
+  explanation: string;
+
+  @Field(() => Boolean)
+  @Column({ default: true })
+  isHidden: boolean;
 
   @Field(() => Problem)
-  @ManyToMany(() => Problem, (problem) => problem.testCases)
+  @ManyToOne(() => Problem, (problem) => problem.testCases)
   problem: Problem;
 }
 
 @ObjectType()
 @Entity()
-export class ProblemList {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class ProblemList extends EntityBase {
   @Field()
   @Column()
   name: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  description?: string;
+  description: string;
 
   @Field(() => Boolean)
   @Column({ default: false })
   isPublic: boolean;
 
   @ManyToMany(() => Problem)
-  @JoinTable()
+  @JoinTable({ name: 'problem_list_problem' })
   @Field(() => [Problem])
   problems: Problem[];
 
-  @Field(() => ID)
-  @Column()
-  userId: string;
-
-  @Field(() => Date)
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field(() => Date)
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.problemLists)
+  @JoinColumn()
+  user: User;
 }

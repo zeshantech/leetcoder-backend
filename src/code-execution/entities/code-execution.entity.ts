@@ -5,14 +5,18 @@ import { User } from '../../user/entities/user.entity';
 import { Problem } from '../../problem/entities/problem.entity';
 
 @ObjectType()
-@Entity()
-export class Submission {
+@Entity('code_executions')
+export class CodeExecution {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => ID)
+  @Column()
+  userId: string;
+
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.submissions)
+  @ManyToOne(() => User)
   @JoinColumn()
   user: User;
 
@@ -21,7 +25,7 @@ export class Submission {
   problemId: string;
 
   @Field(() => Problem)
-  @ManyToOne(() => Problem, (problem) => problem.problemSubmissions)
+  @ManyToOne(() => Problem)
   @JoinColumn()
   problem: Problem;
 
@@ -42,18 +46,30 @@ export class Submission {
   status: SubmissionStatus;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  runtime: number;
+  @Column('text', { nullable: true })
+  output?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  memory: number;
+  memory?: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  runtime?: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  testCasesPassed?: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  totalTestCases?: number;
 
   @Field({ nullable: true })
   @Column('text', { nullable: true })
-  errorMessage: string;
+  errorMessage?: string;
 
   @Field(() => Date)
   @CreateDateColumn()
-  submittedAt: Date;
+  executedAt: Date;
 }

@@ -1,35 +1,44 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { SubmissionService } from './submission.service';
 import { Submission } from './entities/submission.entity';
-import { CreateSubmissionInput } from './dto/create-submission.input';
-import { UpdateSubmissionInput } from './dto/update-submission.input';
+import { CreateSubmissionInput, GetSubmissionsInput } from './dto/submission.input';
+import { GetSubmissionsOutput } from './dto/submission.output';
+import { IDInput } from 'src/common/dto/input.dto';
 
 @Resolver(() => Submission)
 export class SubmissionResolver {
   constructor(private readonly submissionService: SubmissionService) {}
 
   @Mutation(() => Submission)
-  createSubmission(@Args('createSubmissionInput') createSubmissionInput: CreateSubmissionInput) {
-    return this.submissionService.create(createSubmissionInput);
+  @UseGuards(AuthGuard)
+  async submitSolution(@Args('input') input: CreateSubmissionInput, @CurrentUser() user: CurrentUser) {
+    return this.submissionService.submit(input, user);
   }
 
-  @Query(() => [Submission], { name: 'submission' })
-  findAll() {
-    return this.submissionService.findAll();
+  @Query(() => GetSubmissionsOutput)
+  @UseGuards(AuthGuard)
+  async getAllSubmissions(@CurrentUser() user: CurrentUser, @Args('input', { nullable: true }) input: GetSubmissionsInput) {
+    return this.submissionService.getAllSubmissions(input, user);
   }
 
-  @Query(() => Submission, { name: 'submission' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.submissionService.findOne(id);
+  @Query(() => Submission)
+  @UseGuards(AuthGuard)
+  async submission(@Args('params') params: IDInput, @CurrentUser() user: CurrentUser) {
+    return this.submissionService.getSubmission(params.id, user);
   }
 
-  @Mutation(() => Submission)
-  updateSubmission(@Args('updateSubmissionInput') updateSubmissionInput: UpdateSubmissionInput) {
-    return this.submissionService.update(updateSubmissionInput.id, updateSubmissionInput);
+  @Query(() => String)
+  @UseGuards(AuthGuard)
+  async submissionStatus(@Args('params') params: IDInput, @CurrentUser() user: CurrentUser) {
+    return this.submissionService.checkStatus(params.id, user);
   }
 
-  @Mutation(() => Submission)
-  removeSubmission(@Args('id', { type: () => Int }) id: number) {
-    return this.submissionService.remove(id);
+  @Query(() => GetSubmissionsOutput)
+  @UseGuards(AuthGuard)
+  async problemSubmissions(@Args('params') params: IDInput, @Args('input', { nullable: true }) input: GetSubmissionsInput) {
+    return this.submissionService.getSubmissionsByProblemId(params.id, input);
   }
 }

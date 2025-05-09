@@ -1,18 +1,11 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from './guards/gql-auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 
 import { AuthService } from './auth.service';
 import { User } from '../user/entities/user.entity';
-import {
-  RegisterInput,
-  LoginInput,
-  VerifyEmailInput,
-  RequestPasswordResetInput,
-  ResetPasswordInput,
-  ResendVerificationEmailInput,
-} from './dto/auth.input';
+import { RegisterInput, LoginInput, VerifyEmailInput, RequestPasswordResetInput, ResetPasswordInput, ResendVerificationEmailInput } from './dto/auth.input';
 import { MessageOutput } from 'src/common/dto/output.dto';
 import { AuthOutput } from './dto/auth.output';
 
@@ -40,9 +33,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => MessageOutput)
-  async resendVerificationEmail(
-    @Args('input') input: ResendVerificationEmailInput,
-  ) {
+  async resendVerificationEmail(@Args('input') input: ResendVerificationEmailInput) {
     await this.authService.resendVerificationEmail(input.email);
     return {
       message: 'Verification email sent successfully',
@@ -53,8 +44,7 @@ export class AuthResolver {
   async requestPasswordReset(@Args('input') input: RequestPasswordResetInput) {
     await this.authService.requestPasswordReset(input.email);
     return {
-      message:
-        'If your email is registered, you will receive a password reset link',
+      message: 'If your email is registered, you will receive a password reset link',
     };
   }
 
@@ -66,7 +56,7 @@ export class AuthResolver {
     };
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   @Mutation(() => MessageOutput)
   async logout(@CurrentUser() user: CurrentUser) {
     await this.authService.logout(user);

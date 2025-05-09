@@ -46,6 +46,7 @@ export class UserService {
       username: input.username,
       id: Not(user.id),
     });
+
     if (existingUser) {
       throw new ConflictException('Username already exists');
     }

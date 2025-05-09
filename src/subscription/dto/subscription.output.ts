@@ -1,4 +1,4 @@
-import { CreateSubscriptionInput } from './create-subscription.input';
+import { CreateSubscriptionInput } from './subscription.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
